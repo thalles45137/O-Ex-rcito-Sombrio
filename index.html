@@ -3,25 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Sobrevivência - Alex contra os Vilões</title>
+    <title>Sobrevivente da Ilha Perdida</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="game-container">
         <div id="game-ui">
             <button id="start-btn">Iniciar Jogo</button>
-            <div id="scoreboard">
+            <div id="status">
                 <p>Vida: <span id="player-health">100</span></p>
-                <p>Ouro: <span id="player-gold">0</span></p>
+                <p>Fome: <span id="player-hunger">100</span></p>
                 <p>Tempo: <span id="game-time">0</span>s</p>
             </div>
         </div>
         <div id="game-area">
             <div id="player"></div>
-            <div id="villains"></div>
+            <div id="inventory">
+                <h3>Inventário</h3>
+                <ul id="items-list">
+                    <!-- Itens vão aparecer aqui -->
+                </ul>
+            </div>
         </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
