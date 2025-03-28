@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sobrevivente da Ilha Perdida</title>
+    <title>Escape do Labirinto</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="game-container">
         <div id="game-ui">
             <button id="start-btn">Iniciar Jogo</button>
-            <div id="status">
-                <p>Vida: <span id="player-health">100</span></p>
-                <p>Fome: <span id="player-hunger">100</span></p>
+            <div id="scoreboard">
                 <p>Tempo: <span id="game-time">0</span>s</p>
+                <p>Chaves: <span id="keys-collected">0</span></p>
             </div>
         </div>
         <div id="game-area">
             <div id="player"></div>
-            <div id="inventory">
-                <h3>Inventário</h3>
-                <ul id="items-list">
-                    <!-- Itens vão aparecer aqui -->
-                </ul>
-            </div>
+            <div id="obstacles"></div>
+            <div id="keys"></div>
         </div>
     </div>
 

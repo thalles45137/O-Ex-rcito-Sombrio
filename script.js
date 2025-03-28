@@ -1,71 +1,127 @@
+let player;
+let obstacles = [];
+let keys = [];
+let timeElapsed = 0;
+let keysCollected = 0;
+let gameInterval;
+let obstacleInterval;
+let keyInterval;
+
 document.getElementById('start-btn').addEventListener('click', startGame);
 
-let player;
-let timeElapsed = 0;
-let playerHealth = 100;
-let playerHunger = 100;
-let inventory = [];
-let gameInterval;
-let hungerInterval;
-let villainInterval;
-
 function startGame() {
-    document.getElementById('start-btn').style.display = 'none';
-    document.getElementById('game-ui').style.display = 'block';
-
+    // Inicializa variáveis
     player = document.getElementById('player');
     player.style.left = '50%';
     player.style.bottom = '10px';
-
-    inventory = [];
+    
     timeElapsed = 0;
-    playerHealth = 100;
-    playerHunger = 100;
-
+    keysCollected = 0;
+    obstacles = [];
+    keys = [];
     updateUI();
+
+    // Esconde botão de start e mostra a interface
+    document.getElementById('start-btn').style.display = 'none';
+    document.getElementById('game-ui').style.display = 'block';
+
+    // Começa os intervalos
     gameInterval = setInterval(gameLoop, 1000);
-    hungerInterval = setInterval(decreaseHunger, 5000);
+    obstacleInterval = setInterval(spawnObstacle, 1500);
+    keyInterval = setInterval(spawnKey, 3000);
 }
 
 function gameLoop() {
     timeElapsed++;
     updateUI();
 
-    if (playerHealth <= 0 || playerHunger <= 0) {
-        clearInterval(gameInterval);
-        clearInterval(hungerInterval);
-        alert('Você foi derrotado! O jogo será reiniciado.');
-        resetGame();
+    // Verifica se o jogador colidiu com um obstáculo
+    for (let obstacle of obstacles) {
+        if (checkCollision(player, obstacle)) {
+            endGame();
+            return;
+        }
     }
-}
 
-function decreaseHunger() {
-    playerHunger -= 5;
-    if (playerHunger < 0) playerHunger = 0;
-    updateUI();
+    // Verifica se o jogador coletou uma chave
+    for (let key of keys) {
+        if (checkCollision(player, key)) {
+            keysCollected++;
+            key.remove();
+            keys = keys.filter(k => k !== key);
+        }
+    }
 }
 
 function updateUI() {
-    document.getElementById('player-health').textContent = playerHealth;
-    document.getElementById('player-hunger').textContent = playerHunger;
     document.getElementById('game-time').textContent = timeElapsed;
-
-    let itemsList = document.getElementById('items-list');
-    itemsList.innerHTML = '';
-    inventory.forEach(item => {
-        let li = document.createElement('li');
-        li.textContent = item;
-        itemsList.appendChild(li);
-    });
+    document.getElementById('keys-collected').textContent = keysCollected;
 }
 
-function collectResource(resource) {
-    inventory.push(resource);
-    if (resource === 'Comida') {
-        playerHunger += 20;
-        if (playerHunger > 100) playerHunger = 100;
-    }
-    updateUI();
+function spawnObstacle() {
+    const obstacle = document.createElement('div');
+    obstacle.classList.add('obstacle');
+    obstacle.style.left = `${Math.random() * 370}px`;
+    obstacle.style.top = '0px';
+    document.getElementById('obstacles').appendChild(obstacle);
+    
+    obstacles.push(obstacle);
+    moveObstacle(obstacle);
+}
+
+function moveObstacle(obstacle) {
+    const obstacleInterval = setInterval(() => {
+        let obstacleTop = parseInt(obstacle.style.top);
+        if (obstacleTop >= 400) {
+            clearInterval(obstacleInterval);
+            obstacle.remove();
+            obstacles = obstacles.filter(o => o !== obstacle);
+        } else {
+            obstacle.style.top = `${obstacleTop + 5}px`;
+        }
+    }, 50);
+}
+
+function spawnKey() {
+    const key = document.createElement('div');
+    key.classList.add('key');
+    key.style.left = `${Math.random() * 370}px`;
+    key.style.top = '0px';
+    document.getElementById('keys').appendChild(key);
+    
+    keys.push(key);
+    moveKey(key);
+}
+
+function moveKey(key) {
+    const keyInterval = setInterval(() => {
+        let keyTop = parseInt(key.style.top);
+        if (keyTop >= 400) {
+            clearInterval(keyInterval);
+            key.remove();
+            keys = keys.filter(k => k !== key);
+        } else {
+            key.style.top = `${keyTop + 3}px`;
+        }
+    }, 50);
+}
+
+function checkCollision(player, element) {
+    const playerRect = player.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    
+    return !(playerRect.right < elementRect.left || 
+             playerRect.left > elementRect.right || 
+             playerRect.bottom < elementRect.top || 
+             playerRect.top > elementRect.bottom);
+}
+
+function endGame() {
+    clearInterval(gameInterval);
+    clearInterval(obstacleInterval);
+    clearInterval(keyInterval);
+    alert(`Você perdeu! Você coletou ${keysCollected} chave(s) em ${timeElapsed} segundos.`);
+    resetGame();
 }
 
 function resetGame() {
@@ -73,35 +129,3 @@ function resetGame() {
     document.getElementById('game-ui').style.display = 'none';
     document.getElementById('game-area').innerHTML = '<div id="player"></div>';
 }
-
-function movePlayer(direction) {
-    const step = 10;
-    const playerRect = player.getBoundingClientRect();
-
-    if (direction === 'left' && playerRect.left > 0) {
-        player.style.left = `${playerRect.left - step}px`;
-    }
-    if (direction === 'right' && playerRect.right < 700) {
-        player.style.left = `${playerRect.left + step}px`;
-    }
-    if (direction === 'up' && playerRect.top > 0) {
-        player.style.bottom = `${parseInt(player.style.bottom) + step}px`;
-    }
-    if (direction === 'down' && playerRect.top < 600) {
-        player.style.bottom = `${parseInt(player.style.bottom) - step}px`;
-    }
-}
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') movePlayer('left');
-    if (e.key === 'ArrowRight') movePlayer('right');
-    if (e.key === 'ArrowUp') movePlayer('up');
-    if (e.key === 'ArrowDown') movePlayer('down');
-});
-
-// Funções para coleta de recursos, exemplo:
-setInterval(() => {
-    if (Math.random() < 0.1) {
-        collectResource('Comida');
-    }
-}, 3000);
