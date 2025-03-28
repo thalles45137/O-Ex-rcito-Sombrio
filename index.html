@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Sobrevivência - Alex contra os Vilões</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-ui">
+            <button id="start-btn">Iniciar Jogo</button>
+            <div id="scoreboard">
+                <p>Vida: <span id="player-health">100</span></p>
+                <p>Ouro: <span id="player-gold">0</span></p>
+                <p>Tempo: <span id="game-time">0</span>s</p>
+            </div>
+        </div>
+        <div id="game-area">
+            <div id="player"></div>
+            <div id="villains"></div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
